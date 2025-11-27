@@ -4,6 +4,7 @@ import { Separator } from "@radix-ui/react-separator";
 
 export const Node = ({ data }: WidgetNodeData) => {
   const { title, content } = data;
+
   return (
     <Card className="w-full max-w-sm">
       {title}
