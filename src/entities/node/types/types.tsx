@@ -1,6 +1,5 @@
 import type { Node } from "@xyflow/react";
 import { ListTodo, Notebook } from "lucide-react";
-import type React from "react";
 
 export const WIDGET_TYPES = [
   {
@@ -19,8 +18,7 @@ export type WidgetType = (typeof WIDGET_TYPES)[number];
 
 export interface WidgetData extends Record<string, unknown> {
   title: string;
-  content: React.ReactNode;
-  type?: WidgetType;
+  widgetType?: WidgetType;
   isLike?: boolean;
   isStar?: boolean;
   isBookmark?: boolean;

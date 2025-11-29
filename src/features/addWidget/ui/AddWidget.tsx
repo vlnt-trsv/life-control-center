@@ -1,4 +1,3 @@
-import { useBoardStore } from "@/entities/board/model/store";
 import { Button } from "@/shared/ui/button";
 import { BookmarkIcon, HeartIcon, Plus, StarIcon } from "lucide-react";
 import {
@@ -23,14 +22,14 @@ import {
 import { Label } from "@/shared/ui/label";
 import { ToggleGroup, ToggleGroupItem } from "@/shared/ui/toggle-group";
 import { WIDGET_TYPES, type WidgetData } from "@/entities/node/types/types";
+import { useNodeStore } from "@/entities/node/model/store";
 
 export const AddWidget = () => {
-  const { addWidget } = useBoardStore();
+  const { addWidget } = useNodeStore();
   const [open, setOpen] = React.useState(false);
   const [widgetData, setWidgetData] = React.useState<WidgetData>({
     title: "",
-    content: "",
-    type: undefined,
+    widgetType: undefined,
   });
 
   const handleAddWidget = () => {
@@ -68,7 +67,7 @@ export const AddWidget = () => {
                 <Label>Тип виджета</Label>
                 <PopoverTrigger asChild>
                   <Button variant="outline" className="w-[150px] justify-start">
-                    {widgetData.type?.label}
+                    {widgetData.widgetType?.label}
                   </Button>
                 </PopoverTrigger>
               </div>
@@ -111,7 +110,7 @@ export const AddWidget = () => {
               <Command
                 filter={(value, search) => {
                   const haystack = `${value} ${
-                    widgetData.type?.label ?? ""
+                    widgetData.widgetType?.label ?? ""
                   }`.toLowerCase();
                   const needle = search.toLowerCase();
                   return haystack.includes(needle) ? 1 : -1;
@@ -121,20 +120,23 @@ export const AddWidget = () => {
                 <CommandList>
                   <CommandEmpty>Нет подходящего виджета</CommandEmpty>
                   <CommandGroup heading="Текстовые виджеты">
-                    {WIDGET_TYPES.map((status) => (
+                    {WIDGET_TYPES.map((widgetType) => (
                       <CommandItem
-                        key={status.value}
-                        value={status.value}
+                        key={widgetType.value}
+                        value={widgetType.value}
                         role="button"
                         onSelect={(value: string) => {
                           setWidgetData((prev) => ({
                             ...prev,
-                            type: WIDGET_TYPES.find((t) => t.value === value)!,
+                            widgetType: WIDGET_TYPES.find(
+                              (t) => t.value === value
+                            )!,
                           }));
                           setOpen(false);
                         }}
                       >
-                        {status.label}
+                        {widgetType.icon}
+                        {widgetType.label}
                       </CommandItem>
                     ))}
                   </CommandGroup>
