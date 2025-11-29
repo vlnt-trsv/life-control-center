@@ -1,15 +1,13 @@
-import type { WidgetNodeData } from "../types/types";
-import { Card } from "@/shared/components/ui/card";
+import type { Props } from "../types/types";
+import { Card, CardContent, CardHeader } from "@/shared/ui/card";
 import { Separator } from "@radix-ui/react-separator";
 
-export const Node = ({ data }: WidgetNodeData) => {
-  const { title, content } = data;
-
+export const Node = ({ data }: Props) => {
   return (
     <Card className="w-full max-w-sm">
-      {title}
+      <CardHeader>{data.title}</CardHeader>
       <Separator className="border" />
-      {content}
+      <CardContent>{data.content}</CardContent>
     </Card>
   );
 };

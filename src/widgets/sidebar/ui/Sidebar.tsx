@@ -6,7 +6,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/shared/components/ui/sidebar";
+} from "@/shared/ui/sidebar";
 
 import type { Props } from "../types/types";
 

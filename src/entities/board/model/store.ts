@@ -1,7 +1,6 @@
-import type { WidgetType } from "./../types/types";
 import { create } from "zustand";
 import { applyNodeChanges, type Node, type NodeChange } from "@xyflow/react";
-import type { WidgetNodeData } from "@/entities/node/types/types";
+import type { WidgetData } from "@/entities/node/types/types";
 import type { WidgetRecord } from "../types/types.db";
 import {
   createWidget,
@@ -9,13 +8,13 @@ import {
   updateWidgetPosition,
 } from "../types/api.db";
 
-export type WidgetNode = Node<WidgetNodeData>;
+export type WidgetNode = Node<WidgetData>;
 
 interface BoardState {
-  nodes: WidgetType[];
+  nodes: WidgetNode[];
   getWidgets: () => Promise<void>;
   updateWidget: (changes: NodeChange[]) => void;
-  addWidget: () => void;
+  addWidget: (data: WidgetData) => void;
 }
 
 function widgetRecordToNode(rec: WidgetRecord): WidgetNode {
@@ -24,8 +23,8 @@ function widgetRecordToNode(rec: WidgetRecord): WidgetNode {
     type: "widget",
     position: { x: rec.positionX, y: rec.positionY },
     data: {
-      widgetType: rec.type,
-      title: rec.title ?? undefined,
+      type: rec.type,
+      title: rec.title,
       config: rec.config,
       content: rec.content,
     },
@@ -73,21 +72,25 @@ export const useBoardStore = create<BoardState>((set, get) => {
       }
     },
 
-    addWidget: () => {
+    addWidget: (data: WidgetData) => {
       const newWidget = {
         id: crypto.randomUUID(),
-        type: "widget",
         position: { x: 0, y: 0 },
+        type: data.type,
         data: {
-          title: "",
-          content: "",
+          type: data.type?.value,
+          title: data.title,
+          content: data.content,
         },
       };
       void createWidget({
         id: newWidget.id,
-        type: newWidget.type,
-        title: newWidget.data.title,
-        content: newWidget.data.content,
+        type: newWidget.type || "",
+        data: {
+          type: newWidget.data.type ?? "unknown",
+          title: newWidget.data.title,
+          content: newWidget.data.content,
+        },
         positionX: newWidget.position.x,
         positionY: newWidget.position.y,
       });

@@ -1,12 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import type { WidgetType } from "./types";
 
-export interface WidgetRecord {
+import type { WidgetData } from "@/entities/node/types/types";
+
+export interface WidgetRecord extends WidgetData {
   id: string;
   userId: string;
-  type: WidgetType;
-  title: React.ReactNode;
-  content: React.ReactNode;
   positionX: number;
   positionY: number;
   width: number;
@@ -20,7 +18,7 @@ export function mapWidgetRow(row: any): WidgetRecord {
   return {
     id: row.id,
     userId: row.user_id,
-    type: row.widget_type as WidgetType,
+    type: row.type ,
     title: row.title,
     content: row.content,
     positionX: row.position_x,

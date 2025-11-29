@@ -1,5 +1,4 @@
 import { supabase } from "@/shared/api/supabaseClient";
-import type { WidgetType } from "./types";
 import { mapWidgetRow, type WidgetRecord } from "./types.db";
 
 const TABLE = "widgets";
@@ -18,8 +17,11 @@ export async function getWidgets(): Promise<WidgetRecord[]> {
 export async function createWidget(params: {
   id: string;
   type: string;
-  title: React.ReactNode;
-  content: React.ReactNode;
+  data: {
+    type: string;
+    title: React.ReactNode;
+    content: React.ReactNode;
+  };
   positionX?: number;
   positionY?: number;
   width?: number;
@@ -31,8 +33,11 @@ export async function createWidget(params: {
     .insert({
       id: params.id,
       type: params.type,
-      title: params.title,
-      content: params.title,
+      data: {
+        type: params.data.type,
+        title: params.data.title,
+        content: params.data.content,
+      },
       position_x: params.positionX ?? 200,
       position_y: params.positionY ?? 200,
       width: params.width ?? 320,

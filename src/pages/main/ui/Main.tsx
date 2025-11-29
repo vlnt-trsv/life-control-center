@@ -1,28 +1,14 @@
-import { SidebarProvider } from "@/shared/components/ui/sidebar";
+import { SidebarProvider } from "@/shared/ui/sidebar";
 import { Dashboard } from "@/widgets/dashboard/ui/Dashboard";
-import { Header } from "@/widgets/header/ui/Header";
-import { Home } from "lucide-react";
-import { Sidebar } from "@/widgets/sidebar/ui/Sidebar";
-import { useBoardStore } from "@/entities/board/model/store";
-
-const items = [
-  {
-    title: "Home",
-    url: "#",
-    icon: Home,
-  },
-];
+import { Menu } from "@/widgets/menu/ui/Menu";
+// import { Sidebar } from "@/widgets/sidebar/ui/Sidebar";
 
 export const Main = () => {
-  const state = useBoardStore();
-
   return (
-    <>
-      <SidebarProvider>
-        <Header />
-        <Sidebar items={items} />
-        <Dashboard nodes={state.nodes} />
-      </SidebarProvider>
-    </>
+    <SidebarProvider>
+      <Menu />
+      {/* <Sidebar items={[]} /> */}
+      <Dashboard />
+    </SidebarProvider>
   );
 };
