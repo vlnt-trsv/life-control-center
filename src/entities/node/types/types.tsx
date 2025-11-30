@@ -1,3 +1,4 @@
+import { Todo } from "@/entities/todo/ui/Todo";
 import type { Node } from "@xyflow/react";
 import { ListTodo, Notebook } from "lucide-react";
 
@@ -6,6 +7,7 @@ export const WIDGET_TYPES = [
     value: "todo",
     label: "Чек-лист",
     icon: <ListTodo />,
+    ui: <Todo />,
   },
   {
     value: "note",
