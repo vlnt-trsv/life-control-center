@@ -2,6 +2,7 @@ import { Button } from "@/shared/ui/button";
 import { BookmarkIcon, HeartIcon, Plus, StarIcon } from "lucide-react";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogHeader,
   DialogTitle,
@@ -21,19 +22,17 @@ import {
 } from "@/shared/ui/command";
 import { Label } from "@/shared/ui/label";
 import { ToggleGroup, ToggleGroupItem } from "@/shared/ui/toggle-group";
-import { WIDGET_TYPES, type WidgetData } from "@/entities/node/types/types";
+import { WIDGET_TYPES } from "@/entities/node/types/types";
+import { useBoardStore } from "@/entities/board/model/store";
 import { useNodeStore } from "@/entities/node/model/store";
 
 export const AddWidget = () => {
-  const { addWidget } = useNodeStore();
+  const { addWidget } = useBoardStore();
+  const { node, setNode } = useNodeStore();
   const [open, setOpen] = React.useState(false);
-  const [widgetData, setWidgetData] = React.useState<WidgetData>({
-    title: "",
-    widgetType: undefined,
-  });
 
   const handleAddWidget = () => {
-    addWidget(widgetData);
+    addWidget(node);
   };
 
   return (
@@ -42,11 +41,11 @@ export const AddWidget = () => {
         <Popover open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
             <Button variant="outline" className="h-full">
-              <Plus className="size-6 h-f" />
+              <Plus className="size-6" />
             </Button>
           </DialogTrigger>
 
-          <DialogContent>
+          <DialogContent showCloseButton={false}>
             <DialogHeader>
               <DialogTitle>Добавление виджета</DialogTitle>
             </DialogHeader>
@@ -54,10 +53,13 @@ export const AddWidget = () => {
               <Label>Название виджета</Label>
               <Input
                 id="title"
-                value={widgetData.title}
+                value={node.title || ""}
                 placeholder="Введите название"
                 onChange={(e) =>
-                  setWidgetData({ ...widgetData, title: e.target.value })
+                  setNode({
+                    ...node,
+                    title: e.target.value,
+                  })
                 }
               />
             </div>
@@ -67,7 +69,8 @@ export const AddWidget = () => {
                 <Label>Тип виджета</Label>
                 <PopoverTrigger asChild>
                   <Button variant="outline" className="w-[150px] justify-start">
-                    {widgetData.widgetType?.label}
+                    {node.widgetType?.icon}
+                    {node.widgetType?.label}
                   </Button>
                 </PopoverTrigger>
               </div>
@@ -110,7 +113,7 @@ export const AddWidget = () => {
               <Command
                 filter={(value, search) => {
                   const haystack = `${value} ${
-                    widgetData.widgetType?.label ?? ""
+                    node.widgetType?.label ?? ""
                   }`.toLowerCase();
                   const needle = search.toLowerCase();
                   return haystack.includes(needle) ? 1 : -1;
@@ -126,12 +129,12 @@ export const AddWidget = () => {
                         value={widgetType.value}
                         role="button"
                         onSelect={(value: string) => {
-                          setWidgetData((prev) => ({
-                            ...prev,
+                          setNode({
+                            ...node,
                             widgetType: WIDGET_TYPES.find(
                               (t) => t.value === value
                             )!,
-                          }));
+                          });
                           setOpen(false);
                         }}
                       >
@@ -143,14 +146,15 @@ export const AddWidget = () => {
                 </CommandList>
               </Command>
             </PopoverContent>
-
-            <Button
-              variant="secondary"
-              className="h-full"
-              onClick={() => handleAddWidget()}
-            >
-              Добавить
-            </Button>
+            <DialogClose asChild>
+              <Button
+                variant="secondary"
+                className="w-full"
+                onClick={() => handleAddWidget()}
+              >
+                Добавить
+              </Button>
+            </DialogClose>
           </DialogContent>
         </Popover>
       </Dialog>
