@@ -1,40 +1,62 @@
 import { Card, CardContent, CardHeader } from "@/shared/ui/card";
 import { Separator } from "@radix-ui/react-separator";
 import type { WidgetNode, WidgetType } from "../types/types";
-import { Todo } from "@/entities/todo/ui/Todo";
-import { NodeToolbar } from "@xyflow/react";
-import { Button } from "@/shared/ui/button";
 import { useBoardStore } from "@/entities/board/model/store";
-import { Trash } from "lucide-react";
+import { Settings, Trash } from "lucide-react";
+import { WIDGET_TYPES } from "../config";
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuShortcut,
+  ContextMenuTrigger,
+  ContextMenuItem,
+} from "@/shared/ui/context-menu";
 
-export const Node = ({ id }: WidgetNode) => {
-  const { nodes, deleteWidget } = useBoardStore();
+export const Node = ({ id, data }: Pick<WidgetNode, "id" | "data">) => {
+  const { deleteWidget, setEditDialogOpen } = useBoardStore();
 
-  const contentType = (type: WidgetType) => {
-    switch (type) {
-      case "todo":
-        return <Todo />;
-      default:
-        return null;
+  const handleKeyDown = (event: React.KeyboardEvent) => {
+    if (event.key === "Delete") {
+      deleteWidget(id);
     }
   };
 
-  const deleteNode = (id) => {
-    deleteWidget(id);
-  };
-
-  const node = nodes.find((node) => node.id === id);
+  const widget = WIDGET_TYPES.find(
+    (widgetType) =>
+      widgetType.value === (data.widgetType as unknown as WidgetType["value"])
+  );
 
   return (
-    <Card className="w-full max-w-sm">
-      <CardHeader>{node?.data.title}</CardHeader>
-      <Separator className="border" />
-      <CardContent>{contentType(node?.data.widgetType)}</CardContent>
-      <NodeToolbar>
-        <Button onClick={() => deleteNode(id)}>
-          <Trash />
-        </Button>
-      </NodeToolbar>
-    </Card>
+    <>
+      <ContextMenu>
+        <ContextMenuTrigger>
+          <ContextMenuContent className="w-52">
+            <ContextMenuItem onClick={() => setEditDialogOpen(true, id)}>
+              <Settings />
+              Настройки
+              <ContextMenuShortcut>s</ContextMenuShortcut>
+            </ContextMenuItem>
+            <ContextMenuItem
+              variant="destructive"
+              onClick={() => deleteWidget(id)}
+            >
+              <Trash />
+              Удалить
+              <ContextMenuShortcut>delete</ContextMenuShortcut>
+            </ContextMenuItem>
+          </ContextMenuContent>
+
+          <Card
+            className={"w-full max-w-sm cursor-default"}
+            onKeyDown={(event) => handleKeyDown(event)}
+            tabIndex={0}
+          >
+            <CardHeader>{data.title}</CardHeader>
+            <Separator className="border" />
+            <CardContent>{widget?.ui}</CardContent>
+          </Card>
+        </ContextMenuTrigger>
+      </ContextMenu>
+    </>
   );
 };

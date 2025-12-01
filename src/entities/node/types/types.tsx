@@ -1,22 +1,12 @@
-import { Todo } from "@/entities/todo/ui/Todo";
 import type { Node } from "@xyflow/react";
-import { ListTodo, Notebook } from "lucide-react";
+import type React from "react";
 
-export const WIDGET_TYPES = [
-  {
-    value: "todo",
-    label: "Чек-лист",
-    icon: <ListTodo />,
-    ui: <Todo />,
-  },
-  {
-    value: "note",
-    label: "Заметки",
-    icon: <Notebook />,
-  },
-] as const;
-
-export type WidgetType = (typeof WIDGET_TYPES)[number];
+export interface WidgetType {
+  value: string;
+  label: string;
+  icon: React.ReactElement;
+  ui: React.ReactNode;
+}
 
 export interface WidgetData extends Record<string, unknown> {
   title: string;
