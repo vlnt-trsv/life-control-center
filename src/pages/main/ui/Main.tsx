@@ -1,4 +1,5 @@
 import { useBoardStore } from "@/entities/board/model/store";
+import { useTodoStore } from "@/entities/todo/model/store";
 import { Item } from "@/shared/ui/item";
 import { Label } from "@/shared/ui/label";
 import { SidebarProvider } from "@/shared/ui/sidebar";
@@ -10,12 +11,14 @@ import { useEffect } from "react";
 
 export const Main = () => {
   const { isNodesLoad, getWidgets } = useBoardStore();
+  const { isTodosLoad, getTodos } = useTodoStore();
 
   useEffect(() => {
     void getWidgets();
-  }, [getWidgets]);
+    void getTodos();
+  }, [getWidgets, getTodos]);
 
-  if (!isNodesLoad) {
+  if (!isNodesLoad && !isTodosLoad) {
     return (
       <div className="h-screen w-screen flex items-center justify-center">
         <Item variant="outline">
