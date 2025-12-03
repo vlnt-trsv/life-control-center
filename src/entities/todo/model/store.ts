@@ -23,7 +23,7 @@ interface TodoState {
   isTodosLoad: boolean;
 }
 
-export const useTodoStore = create<TodoState>((set) => {
+export const useTodoStore = create<TodoState>((set, get) => {
   return {
     todos: [],
     isTodosLoad: false,
@@ -39,22 +39,19 @@ export const useTodoStore = create<TodoState>((set) => {
         title,
         isComplete: false,
       });
-      const todos = await getTodosApi();
-      set({ todos, isTodosLoad: true });
+      get().getTodos();
       toast.success("Задача успешно создана!");
     },
 
     async deleteTodo(id) {
       await deleteTodoApi(id);
-      const todos = await getTodosApi();
-      set({ todos, isTodosLoad: true });
+      get().getTodos();
       toast.success("Задача успешно удалена!");
     },
 
     async updateTodo(id, title, isComplete) {
       await updateTodoApi({ id, title, isComplete });
-      const todos = await getTodosApi();
-      set({ todos, isTodosLoad: true });
+      get().getTodos();
       toast.success("Задача успешно обновлена!");
     },
   };
