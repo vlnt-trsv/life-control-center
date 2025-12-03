@@ -2,8 +2,9 @@ import type React from "react";
 
 export type Props = {
   items: {
-    title: string;
-    url: string;
-    icon: React.ComponentType
+    name: string;
+    url?: string;
+    icon?: React.ReactElement;
+    ui?: React.ReactNode;
   }[];
 };

@@ -1,12 +1,7 @@
-import { Main } from "../pages/main/ui/Main";
-import { StoreProvider } from "./providers/StoreProvider";
+import { Outlet } from "react-router-dom";
 
 export const App = () => {
-  return (
-    <StoreProvider>
-      <Main />
-    </StoreProvider>
-  );
+  return <Outlet />;
 };
 
 export default App;
