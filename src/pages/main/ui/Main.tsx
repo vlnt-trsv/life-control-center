@@ -2,12 +2,11 @@ import { useBoardStore } from "@/entities/board/model/store";
 import { useTodoStore } from "@/entities/todo/model/store";
 import { Item } from "@/shared/ui/item";
 import { Label } from "@/shared/ui/label";
-import { SidebarProvider } from "@/shared/ui/sidebar";
 import { Spinner } from "@/shared/ui/spinner";
 import { Dashboard } from "@/widgets/dashboard/ui/Dashboard";
 import { Menu } from "@/widgets/menu/ui/Menu";
 import { useEffect } from "react";
-// import { Sidebar } from "@/widgets/sidebar/ui/Sidebar";
+import { Sidebar } from "@/widgets/sidebar/ui/Sidebar";
 
 export const Main = () => {
   const { isNodesLoad, getWidgets } = useBoardStore();
@@ -30,10 +29,10 @@ export const Main = () => {
   }
 
   return (
-    <SidebarProvider>
+    <>
       <Menu />
-      {/* <Sidebar items={[]} /> */}
+      <Sidebar />
       <Dashboard />
-    </SidebarProvider>
+    </>
   );
 };
