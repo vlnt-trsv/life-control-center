@@ -63,9 +63,7 @@ export const useBoardStore = create<BoardState>((set, get) => {
         data: data,
         position: { x: 0, y: 0 },
       });
-      const widgets = await getWidgetsApi();
-      const nodes = widgets.map(mapToNode);
-      set({ nodes, isNodesLoad: true });
+      get().getWidgets();
       toast.success("Виджет успешно создан!");
     },
 
