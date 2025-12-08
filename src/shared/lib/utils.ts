@@ -28,6 +28,7 @@ export function mapToNode(rec: any) {
     data: {
       widgetType: rec.widgetType,
       title: rec.title,
+      userId: rec.userId
     },
   };
 }
