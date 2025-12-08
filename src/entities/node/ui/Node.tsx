@@ -34,7 +34,6 @@ export const Node = ({ id, data }: Pick<WidgetNode, "id" | "data">) => {
             <ContextMenuItem onClick={() => setEditDialogOpen(true, id)}>
               <Settings />
               Настройки
-              <ContextMenuShortcut>s</ContextMenuShortcut>
             </ContextMenuItem>
             <ContextMenuItem
               variant="destructive"
@@ -53,7 +52,7 @@ export const Node = ({ id, data }: Pick<WidgetNode, "id" | "data">) => {
           >
             <CardHeader>{data.title}</CardHeader>
             <Separator className="border" />
-            <CardContent>{widget?.ui}</CardContent>
+            <CardContent>{widget?.ui({ widgetId: id })}</CardContent>
           </Card>
         </ContextMenuTrigger>
       </ContextMenu>

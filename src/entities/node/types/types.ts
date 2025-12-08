@@ -1,3 +1,4 @@
+import type { User } from "@/entities/user/types/types";
 import type { Node } from "@xyflow/react";
 import type React from "react";
 
@@ -11,6 +12,7 @@ export interface WidgetType {
 export interface WidgetData extends Record<string, unknown> {
   title: string;
   widgetType?: WidgetType;
+  userId: User["id"];
   isLike?: boolean;
   isStar?: boolean;
   isBookmark?: boolean;
