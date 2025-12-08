@@ -83,7 +83,7 @@ export function SignInForm({
                 />
               </Field>
               <Field>
-                <Button type="submit">Login</Button>
+                <Button type="submit">Войти</Button>
                 <Button variant="outline" type="button" disabled>
                   Войти с помощью Google
                 </Button>
