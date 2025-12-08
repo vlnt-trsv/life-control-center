@@ -14,7 +14,6 @@ export const Main = () => {
 
   useEffect(() => {
     void getWidgets();
-    void getTodos();
   }, [getWidgets, getTodos]);
 
   if (!isNodesLoad && !isTodosLoad) {
