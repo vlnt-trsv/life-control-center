@@ -4,7 +4,6 @@ import type {
   SignInWithPasswordCredentials,
   SignUpWithPasswordCredentials,
 } from "@supabase/supabase-js";
-import type { User } from "@/entities/user/types/types";
 import {
   getSession,
   onAuthStateChange,
@@ -12,10 +11,10 @@ import {
   signOut,
   signUp,
 } from "../api/api.db";
+import { useUserStore } from "@/entities/user/model/store";
 
 interface AuthState {
   session: Session | null;
-  user: User | null;
   loading: boolean;
   signIn: (credentials: SignInWithPasswordCredentials) => Promise<void>;
   signUp: (credentials: SignUpWithPasswordCredentials) => Promise<void>;
@@ -25,27 +24,25 @@ interface AuthState {
 
 export const useAuthStore = create<AuthState>((set, get) => ({
   session: null,
-  user: null,
   loading: true,
 
   signIn: async (credentials) => {
-    const { error, data } = await signInWithPassword(credentials);
+    const { error } = await signInWithPassword(credentials);
     if (error) throw error;
     await get().checkSession();
-    return { success: true, data };
   },
 
   signUp: async (credentials) => {
-    const { error, data } = await signUp(credentials);
+    const { error } = await signUp(credentials);
     if (error) throw error;
     await get().checkSession();
-    return { success: true, data };
   },
 
   signOut: async () => {
     const { error } = await signOut();
     if (error) throw error;
-    set({ session: null, user: null });
+    set({ session: null });
+    useUserStore.getState().clearUser();
   },
 
   checkSession: async () => {
@@ -53,16 +50,22 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     const {
       data: { session },
     } = await getSession();
-    set({ session, user: session?.user ?? null, loading: false });
+
+    set({ session, loading: false });
+    if (session?.user) {
+      useUserStore.getState().setUser(session.user);
+    }
   },
 }));
 
 onAuthStateChange((_event, session) => {
   useAuthStore.setState({
     session,
-    user: session?.user ?? null,
     loading: false,
   });
+  if (session?.user) {
+    useUserStore.getState().setUser(session.user);
+  }
 });
 
 useAuthStore.getState().checkSession();
