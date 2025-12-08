@@ -1,9 +1,28 @@
-import type { WidgetData } from "@/entities/node/types/types";
+import type { WidgetData, WidgetNode } from "@/entities/node/types/types";
 import { supabase } from "@/shared/api/supabaseClient";
 import { type WidgetRecord } from "@/shared/api/types/types.db";
 
 const TABLE = "widgets";
 
+export async function createWidget(params: WidgetNode): Promise<WidgetRecord> {
+  const { data, error } = await supabase
+    .from(TABLE)
+    .insert({
+      id: params.id,
+      userId: params.data.userId,
+      type: params.type,
+      widgetType: params.data?.widgetType?.value,
+      title: params.data?.title,
+      positionX: params.position.x,
+      positionY: params.position.y,
+    })
+    .select("*")
+    .single();
+
+  if (error) throw error;
+
+  return data;
+}
 export async function getWidgets(): Promise<WidgetRecord[]> {
   const { data, error } = await supabase
     .from(TABLE)

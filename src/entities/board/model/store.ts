@@ -9,7 +9,8 @@ import {
 } from "../api/api.db";
 import { mapToNode } from "@/shared/lib/utils";
 import { applyNodeChanges, type NodeChange } from "@xyflow/react";
-import { createWidget } from "@/entities/node/api/api.db";
+import { createWidget } from "@/entities/board/api/api.db";
+import { useUserStore } from "@/entities/user/model/store";
 
 interface BoardState {
   nodes: WidgetNode[];
@@ -36,6 +37,8 @@ interface BoardState {
 }
 
 export const useBoardStore = create<BoardState>((set, get) => {
+  const USER = useUserStore.getState().user;
+  
   return {
     nodes: [],
     isNodesLoad: false,
@@ -60,7 +63,10 @@ export const useBoardStore = create<BoardState>((set, get) => {
       await createWidget({
         id: crypto.randomUUID(),
         type: "widget",
-        data: data,
+        data: {
+          ...data,
+          userId: USER.id,
+        },
         position: { x: 0, y: 0 },
       });
       get().getWidgets();
@@ -69,7 +75,6 @@ export const useBoardStore = create<BoardState>((set, get) => {
 
     async updateWidget(id, data) {
       let nodeToUpdate: WidgetNode | undefined;
-      console.log(data);
 
       set((state) => ({
         nodes: state.nodes.map((node) => {
