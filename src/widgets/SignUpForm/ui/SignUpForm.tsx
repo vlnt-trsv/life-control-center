@@ -19,7 +19,6 @@ import { useNavigate } from "react-router-dom";
 
 export function SignUpForm({ ...props }: React.ComponentProps<typeof Card>) {
   const [email, setEmail] = React.useState("");
-  const [fullName, setFullName] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [repassword, setRepassword] = React.useState("");
   const [error, setError] = React.useState("");
@@ -51,17 +50,6 @@ export function SignUpForm({ ...props }: React.ComponentProps<typeof Card>) {
       <CardContent>
         <form onSubmit={handleSignUp}>
           <FieldGroup>
-            <Field>
-              <FieldLabel htmlFor="name">Полное имя</FieldLabel>
-              <Input
-                id="name"
-                type="text"
-                placeholder="Иван Иванов"
-                required
-                value={fullName}
-                onChange={(event) => setFullName(event.target.value)}
-              />
-            </Field>
             <Field>
               <FieldLabel htmlFor="email">Электронная почта</FieldLabel>
               <Input
