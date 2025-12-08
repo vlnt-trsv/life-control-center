@@ -21,13 +21,27 @@ import {
 import { Input } from "@/shared/ui/input";
 import type { Todo as TodoType } from "../types/types";
 import { toast } from "sonner";
+import type { WidgetNode } from "@/entities/node/types/types";
+import { useUserStore } from "@/entities/user/model/store";
 
-export const Todo = () => {
-  const { todos, createTodo, updateTodo, deleteTodo } = useTodoStore();
+interface Props {
+  widgetId: WidgetNode["id"];
+}
+
+export const Todo: React.FC<Props> = ({ widgetId }) => {
+  const { todos, createTodo, updateTodo, deleteTodo, getTodos } =
+    useTodoStore();
   const [isOpen, setIsOpen] = React.useState(true);
   const [dialogOpen, setDialogOpen] = React.useState(false);
   const [editingTodo, setEditingTodo] = React.useState<TodoType | null>(null);
   const [title, setTitle] = React.useState("");
+  const { user } = useUserStore();
+
+  React.useEffect(() => {
+    if (widgetId) {
+      getTodos(widgetId);
+    }
+  }, [getTodos, widgetId]);
 
   const handleOpenDialog = (todo?: TodoType) => {
     if (todo) {
@@ -49,16 +63,16 @@ export const Todo = () => {
   const handleSave = () => {
     if (editingTodo) {
       if (!title) return toast.error("Напишите название задачи!");
-      updateTodo(editingTodo.id, title);
+      updateTodo(editingTodo.id, widgetId, title);
     } else {
       if (!title) return toast.error("Напишите название задачи!");
-      createTodo(title);
+      createTodo(title, widgetId, user.id);
     }
     handleCloseDialog();
   };
 
   const handleToggleComplete = (todo: TodoType) => {
-    updateTodo(todo.id, todo.title, !todo.isComplete);
+    updateTodo(todo.id, widgetId, todo.title, !todo.isComplete);
   };
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
@@ -102,7 +116,9 @@ export const Todo = () => {
         className="flex w-[300px] flex-col gap-2"
       >
         <div className="flex items-center justify-between gap-4 ">
-          <h4 className="text-sm font-semibold">Всего {todos.length} задач</h4>
+          <h4 className="text-sm font-semibold">
+            Всего {todos[widgetId]?.length} задач
+          </h4>
           <ButtonGroup>
             <Button
               size="icon-sm"
@@ -111,7 +127,7 @@ export const Todo = () => {
             >
               <Plus />
             </Button>
-            {!!todos.length && (
+            {!!todos[widgetId]?.length && (
               <CollapsibleTrigger asChild>
                 <Button variant="ghost" size="icon" className="size-8">
                   <ChevronsUpDown />
@@ -121,7 +137,7 @@ export const Todo = () => {
           </ButtonGroup>
         </div>
         <CollapsibleContent className="flex flex-col gap-2">
-          {todos.map((todo) => (
+          {todos[widgetId]?.map((todo) => (
             <Item
               key={todo.id}
               variant={todo.isComplete ? "muted" : "outline"}
@@ -148,7 +164,7 @@ export const Todo = () => {
                   <Button
                     size="icon-sm"
                     variant="ghost"
-                    onClick={() => deleteTodo(todo.id)}
+                    onClick={() => deleteTodo(todo.id, widgetId)}
                   >
                     <Trash />
                   </Button>
