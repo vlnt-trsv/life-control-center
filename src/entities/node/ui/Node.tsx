@@ -1,6 +1,12 @@
-import { Card, CardContent, CardHeader } from "@/shared/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/shared/ui/card";
 import { Separator } from "@radix-ui/react-separator";
-import type { WidgetNode, WidgetType } from "../types/types";
+import type { Props, WidgetType } from "../types/types";
 import { useBoardStore } from "@/entities/board/model/store";
 import { Settings, Trash } from "lucide-react";
 import { WIDGET_TYPES } from "../config";
@@ -11,8 +17,9 @@ import {
   ContextMenuTrigger,
   ContextMenuItem,
 } from "@/shared/ui/context-menu";
+import dayjs from "dayjs";
 
-export const Node = ({ id, data }: Pick<WidgetNode, "id" | "data">) => {
+export const Node: React.FC<Props> = ({ id, data }) => {
   const { deleteWidget, setEditDialogOpen } = useBoardStore();
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
@@ -50,7 +57,14 @@ export const Node = ({ id, data }: Pick<WidgetNode, "id" | "data">) => {
             onKeyDown={(event) => handleKeyDown(event)}
             tabIndex={0}
           >
-            <CardHeader>{data.title}</CardHeader>
+            <CardHeader>
+              <CardTitle>{data.title}</CardTitle>
+              <CardDescription>
+                {dayjs(data.updatedAt).format(
+                  "Обновлено: DD.MM.YYYY в HH:mm:ss"
+                )}
+              </CardDescription>
+            </CardHeader>
             <Separator className="border" />
             <CardContent>{widget?.ui({ widgetId: id })}</CardContent>
           </Card>

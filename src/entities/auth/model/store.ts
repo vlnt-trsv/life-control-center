@@ -64,7 +64,7 @@ onAuthStateChange((_event, session) => {
     loading: false,
   });
   if (session?.user) {
-    useUserStore.getState().setUser(session.user);
+    useUserStore.getState().setUser(session?.user);
   }
 });
 

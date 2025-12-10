@@ -152,24 +152,26 @@ export const Todo: React.FC<Props> = ({ widgetId }) => {
                   {todo.title}
                 </Label>
               </ItemContent>
-              <ItemActions>
-                <ButtonGroup>
-                  <Button
-                    size="icon-sm"
-                    variant="ghost"
-                    onClick={() => handleOpenDialog(todo)}
-                  >
-                    <Pencil />
-                  </Button>
-                  <Button
-                    size="icon-sm"
-                    variant="ghost"
-                    onClick={() => deleteTodo(todo.id, widgetId)}
-                  >
-                    <Trash />
-                  </Button>
-                </ButtonGroup>
-              </ItemActions>
+              {!todo.isComplete && (
+                <ItemActions>
+                  <ButtonGroup>
+                    <Button
+                      size="icon-sm"
+                      variant="ghost"
+                      onClick={() => handleOpenDialog(todo)}
+                    >
+                      <Pencil />
+                    </Button>
+                    <Button
+                      size="icon-sm"
+                      variant="ghost"
+                      onClick={() => deleteTodo(todo.id, widgetId)}
+                    >
+                      <Trash />
+                    </Button>
+                  </ButtonGroup>
+                </ItemActions>
+              )}
             </Item>
           ))}
         </CollapsibleContent>

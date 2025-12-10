@@ -1,12 +1,12 @@
 import { create } from "zustand";
-import type { WidgetNode } from "@/entities/node/types/types";
+import type { WidgetData } from "@/entities/node/types/types";
 
 interface NodeState {
-  node: WidgetNode["id"];
-  setNode: (id: WidgetNode["id"]) => void;
+  node: WidgetData | null;
+  setNode: (id: WidgetData) => void;
 }
 
 export const useNodeStore = create<NodeState>((set) => ({
-  node: "",
+  node: null,
   setNode: (id) => set({ node: id }),
 }));

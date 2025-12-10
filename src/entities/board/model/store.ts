@@ -1,5 +1,6 @@
 import { toast } from "sonner";
 import { create } from "zustand";
+import { immer } from "zustand/middleware/immer";
 import type { WidgetData, WidgetNode } from "@/entities/node/types/types";
 import {
   deleteWidget as deleteWidgetApi,
@@ -25,10 +26,8 @@ interface BoardState {
 
   onNodesChange: (changes: NodeChange<WidgetNode>[]) => void;
 
-  // Проверки для тернарных операторов
   isNodesLoad: boolean;
 
-  // Для проброса
   editDialogOpen: {
     isDialogOpen: boolean;
     editingNodeId?: WidgetNode["id"];
@@ -36,10 +35,8 @@ interface BoardState {
   setEditDialogOpen: (isOpen: boolean, id?: WidgetNode["id"]) => void;
 }
 
-export const useBoardStore = create<BoardState>((set, get) => {
-  const USER = useUserStore.getState().user;
-  
-  return {
+export const useBoardStore = create<BoardState>()(
+  immer((set, get) => ({
     nodes: [],
     isNodesLoad: false,
 
@@ -47,71 +44,69 @@ export const useBoardStore = create<BoardState>((set, get) => {
       isDialogOpen: false,
       editingNodeId: "",
     },
+
     setEditDialogOpen(isOpen, id) {
-      set({ editDialogOpen: { isDialogOpen: isOpen, editingNodeId: id } });
+      set((state) => {
+        state.editDialogOpen.isDialogOpen = isOpen;
+        state.editDialogOpen.editingNodeId = id;
+      });
     },
 
     async getWidgets() {
       const widgets = await getWidgetsApi();
-      const nodes = widgets.map(mapToNode);
-      set({ nodes, isNodesLoad: true });
+
+        set((state) => {
+        state.nodes = widgets.map(mapToNode);
+        state.isNodesLoad = true;
+      });
     },
 
-    async addWidget(data: WidgetData) {
-      if (!data) return;
+    async addWidget(data) {
+      const user = useUserStore.getState().user;
+      if (!user) throw new Error("User is null in addWidget()");
 
       await createWidget({
         id: crypto.randomUUID(),
         type: "widget",
         data: {
           ...data,
-          userId: USER.id,
+          userId: user.id,
         },
         position: { x: 0, y: 0 },
       });
-      get().getWidgets();
+
+      await get().getWidgets();
       toast.success("Виджет успешно создан!");
     },
 
     async updateWidget(id, data) {
-      let nodeToUpdate: WidgetNode | undefined;
+      let updated: WidgetNode | undefined;
 
-      set((state) => ({
-        nodes: state.nodes.map((node) => {
-          if (node.id === id) {
-            nodeToUpdate = {
-              ...node,
-              data: {
-                ...node.data,
-                ...data,
-              },
-            };
-            return nodeToUpdate;
-          }
-          return node;
-        }),
-      }));
+      set((state) => {
+        const node = state.nodes.find((n) => n.id === id);
+        if (node) {
+          Object.assign(node.data, data);
+          updated = node;
+        }
+      });
 
-      if (nodeToUpdate) {
-        await updateWidgetApi({
-          id,
-          data: nodeToUpdate.data,
-        });
+      if (updated) {
+        await updateWidgetApi({ id, data: updated.data });
         toast.success("Виджет успешно обновлён!");
       }
     },
 
     async onNodesChange(changes) {
-      const prevNode = get().nodes;
-      const nextNode = applyNodeChanges(changes, prevNode);
-      set({ nodes: nextNode });
+      const prevNodes = structuredClone(get().nodes);
+      const nextNodes = applyNodeChanges(changes, prevNodes);
+      set({ nodes: nextNodes });
 
+      // сохраняем изменение позиций
       for (const change of changes) {
         if (change.type === "position" && change.position) {
-          const { id, position } = change;
           await onNodesChangeApi({
-            id,
-            position,
+            id: change.id,
+            position: change.position,
           });
         }
       }
@@ -119,10 +114,12 @@ export const useBoardStore = create<BoardState>((set, get) => {
 
     async deleteWidget(id) {
       await deleteWidgetApi(id);
-      set((state) => ({
-        nodes: state.nodes.filter((n) => n.id !== id),
-      }));
+
+      set((state) => {
+        state.nodes = state.nodes.filter((n) => n.id !== id);
+      });
+
       toast.success("Виджет успешно удалён!");
     },
-  };
-});
+  }))
+);

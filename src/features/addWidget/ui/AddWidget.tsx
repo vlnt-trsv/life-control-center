@@ -28,7 +28,7 @@ import { ToggleGroup, ToggleGroupItem } from "@/shared/ui/toggle-group";
 import { useBoardStore } from "@/entities/board/model/store";
 import { useNodeStore } from "@/entities/node/model/store";
 import { WIDGET_TYPES } from "@/entities/node/config";
-import type { WidgetNode } from "@/entities/node/types/types";
+import type { WidgetData, WidgetNode } from "@/entities/node/types/types";
 
 export const AddWidget: React.FC = () => {
   const { addWidget } = useBoardStore();
@@ -48,7 +48,7 @@ export const AddWidget: React.FC = () => {
         ...(node?.data ?? {}),
         title: value,
       },
-    } as WidgetNode);
+    } as WidgetData);
   };
 
   const handleSelectType = (value: string) => {
@@ -61,7 +61,7 @@ export const AddWidget: React.FC = () => {
         ...(node?.data ?? {}),
         widgetType: selected,
       },
-    } as WidgetNode);
+    } as WidgetData);
 
     setTypePopoverOpen(false);
   };

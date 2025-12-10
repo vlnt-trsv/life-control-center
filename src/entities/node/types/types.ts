@@ -21,5 +21,6 @@ export interface WidgetData extends Record<string, unknown> {
 export type WidgetNode = Node<WidgetData>;
 
 export interface Props {
-  data: Pick<WidgetData, "title" | "content">;
+  id: WidgetNode["id"];
+  data: WidgetData;
 }

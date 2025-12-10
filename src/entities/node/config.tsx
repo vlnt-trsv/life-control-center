@@ -1,6 +1,7 @@
 import { Todo } from "@/entities/todo/ui/Todo";
 import { ListTodo, Notebook } from "lucide-react";
 import type { WidgetNode } from "./types/types";
+import { Note } from "../note/ui/Note";
 
 export const WIDGET_TYPES = [
   {
@@ -13,6 +14,6 @@ export const WIDGET_TYPES = [
     value: "note",
     label: "Заметки",
     icon: <Notebook />,
-    ui: () => <>Note</>,
+    ui: (props: { widgetId: WidgetNode["id"] }) => <Note {...props} />,
   },
 ] as const;

@@ -7,7 +7,7 @@ import type { User } from "@/entities/user/types/types";
 import { useAuthStore } from "@/entities/auth/model/store";
 
 interface UserState {
-  user: User;
+  user: User | null;
   loading: boolean;
   setUser: (user: User) => void;
   clearUser: () => void;
@@ -16,11 +16,11 @@ interface UserState {
 }
 
 export const useUserStore = create<UserState>((set) => ({
-  user: {} as User,
+  user: null,
   loading: true,
 
   setUser: (user) => set({ user, loading: false }),
-  clearUser: () => set({ user: {} as User }),
+  clearUser: () => set({ user: null }),
 
   updateUser: async (id, data) => {
     await updateUserApi({

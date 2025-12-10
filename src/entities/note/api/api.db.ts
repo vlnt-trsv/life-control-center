@@ -1,12 +1,12 @@
 import { supabase } from "@/shared/api/supabaseClient";
-import type { Todo } from "../types/types";
+import type { Note } from "../types/types";
 import type { WidgetNode } from "@/entities/node/types/types";
 
-const TABLE = "todos";
+const TABLE = "notes";
 
-export async function getTodos(params: {
+export async function getNotes(params: {
   widgetId: WidgetNode["id"];
-}): Promise<Todo[]> {
+}): Promise<Note[]> {
   const { data, error } = await supabase
     .from(TABLE)
     .select("*")
@@ -18,14 +18,14 @@ export async function getTodos(params: {
   return data ?? [];
 }
 
-export async function createTodo(params: Todo): Promise<Todo> {
+export async function createNote(params: Note): Promise<Note> {
   const { data, error } = await supabase
     .from(TABLE)
     .insert({
       id: params.id,
-      title: params.title,
       userId: params.userId,
       widgetId: params.widgetId,
+      content: params.content,
     })
     .select("*")
     .single();
@@ -35,8 +35,8 @@ export async function createTodo(params: Todo): Promise<Todo> {
   return data;
 }
 
-export async function deleteTodo(params: {
-  id: Todo["id"];
+export async function deleteNote(params: {
+  id: Note["id"];
   widgetId: WidgetNode["id"];
 }): Promise<void> {
   const { error } = await supabase
@@ -48,17 +48,15 @@ export async function deleteTodo(params: {
   if (error) throw error;
 }
 
-export async function updateTodo(params: {
-  id: Todo["id"];
+export async function updateNote(params: {
+  id: Note["id"];
   widgetId: WidgetNode["id"];
-  title: Todo["title"];
-  isComplete: Todo["isComplete"];
+  content: Note["content"];
 }): Promise<void> {
   const { error } = await supabase
     .from(TABLE)
     .update({
-      title: params.title,
-      isComplete: params.isComplete,
+      content: params.content,
     })
     .eq("id", params.id)
     .eq("widgetId", params.widgetId);

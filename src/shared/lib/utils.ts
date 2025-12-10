@@ -1,3 +1,4 @@
+import type { WidgetNode } from "@/entities/node/types/types";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -22,13 +23,14 @@ export function mapToNode(rec: any) {
     id: rec.id,
     type: rec.type,
     position: {
-      x: rec.positionX,
-      y: rec.positionY,
+      x: rec.position.x,
+      y: rec.position.y,
     },
     data: {
       widgetType: rec.widgetType,
       title: rec.title,
-      userId: rec.userId
+      userId: rec.userId,
+      updatedAt: rec.updatedAt,
     },
   };
 }

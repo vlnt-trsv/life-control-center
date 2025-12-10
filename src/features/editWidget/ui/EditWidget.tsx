@@ -16,14 +16,7 @@ import { useBoardStore } from "@/entities/board/model/store";
 
 export const EditWidget: React.FC = () => {
   const { updateWidget, editDialogOpen, setEditDialogOpen } = useBoardStore();
-
   const [title, setTitle] = React.useState("");
-
-  //   React.useEffect(() => {
-  //     if (widgetNode) {
-  //       setTitle(widgetNode.data.title);
-  //     }
-  //   }, [editDialogOpen.editingNodeId]);
 
   const handleSave = () => {
     if (!editDialogOpen.editingNodeId) return;
